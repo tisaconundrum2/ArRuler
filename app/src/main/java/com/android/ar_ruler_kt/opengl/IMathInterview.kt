@@ -7,7 +7,7 @@ import kotlin.math.*
 /**
  * @author：TianLong
  * @date：2022/7/9 11:57
- * @detail：Math 辅助 接口
+ * @detail：Math utility interface
  */
 interface IMathInterview {
     fun length(pose1: Pose, pose2: Pose): Double {
@@ -22,12 +22,12 @@ interface IMathInterview {
     }
 
     /**
-     * 90度的旋转矩阵
+     * 90-degree rotation matrix
      */
     val rotate get() = floatArrayOf(0f,-1f,1f,0f)
 
     /**
-     * 二维坐标的旋转：顺时针为正，逆时针为负
+     * 2D coordinate rotation: clockwise is positive, counter-clockwise is negative
      * @param vector x0 = x*cos(β) - y*sin(β)
      *               y0 = y*cos(β) + x*sin(β)
      * @return
@@ -41,10 +41,10 @@ interface IMathInterview {
 
 
     /**
-     * 将向量旋转一定角度后返回结果向量，默认90度
-     * @param vector FloatArray 被旋转向量
-     * @param angle Float 角度
-     * @return FloatArray 旋转后向量
+     * Rotate a vector by the given angle and return the result vector, default 90 degrees
+     * @param vector FloatArray the vector to rotate
+     * @param angle Float the angle in radians
+     * @return FloatArray the rotated vector
      */
     fun rotate(vector: FloatArray,angle:Float = 90.0f):FloatArray{
         val res = FloatArray(2)
@@ -58,7 +58,7 @@ interface IMathInterview {
     }
 
     /**
-     * 二维向量归一化
+     * Normalize a 2D vector
      * @param vector FloatArray
      * @return FloatArray
      */
@@ -74,10 +74,10 @@ interface IMathInterview {
     }
 
     /**
-     * 求出目标三维点在近剪切面上时点的位置
-     * @param resVector FloatArray 结果向量(四维向量)
-     * @param destVector FloatArray 目标向量(四维向量)
-     * @param near Float 近剪切面
+     * Find the position of a 3D point projected onto the near clipping plane
+     * @param resVector FloatArray result vector (4D vector)
+     * @param destVector FloatArray destination vector (4D vector)
+     * @param near Float the near clipping plane distance
      */
     fun mappingNear(resVector:FloatArray,destVector: FloatArray,near :Float= -0.1f) {
         val threshold = near / destVector[2]

@@ -3,7 +3,7 @@ package com.android.ar_ruler_kt.opengl
 /**
  * @author：TianLong
  * @date：2022/6/27 22:55
- * @detail：基础 Renderer 接口
+ * @detail：Base Renderer interface
  */
 interface IBaseRenderer {
      val TAG :String

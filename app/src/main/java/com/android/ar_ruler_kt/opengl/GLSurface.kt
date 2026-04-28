@@ -12,7 +12,7 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * @author：TianLong
  * @date：2022/6/27 22:38
- * @detail：基础 GLSurface 类
+ * @detail：Base GLSurface class
  */
 open class GLSurface : GLSurfaceView ,GLSurfaceView.Renderer{
     protected val TAG = this.javaClass.simpleName
@@ -23,9 +23,9 @@ open class GLSurface : GLSurfaceView ,GLSurfaceView.Renderer{
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs){ initialize()}
 
     private fun initialize(){
-        this.preserveEGLContextOnPause = true // GLSurfaceView  onPause和onResume切换时，是否保留EGLContext上下文
-        this.setEGLContextClientVersion(3) //OpenGL ES 的版本
-        this.setEGLConfigChooser(8, 8, 8, 8, 24, 0) //深度位数，在setRender之前调用
+        this.preserveEGLContextOnPause = true // Whether to retain EGLContext when GLSurfaceView switches between onPause and onResume
+        this.setEGLContextClientVersion(3) // OpenGL ES version
+        this.setEGLConfigChooser(8, 8, 8, 8, 24, 0) // Depth bit count, call before setRenderer
 
         this.setRenderer(this)
         this.renderMode = RENDERMODE_CONTINUOUSLY

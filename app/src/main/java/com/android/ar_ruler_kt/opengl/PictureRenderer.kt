@@ -14,7 +14,7 @@ import java.util.*
 /**
  * @author：TianLong
  * @date：2022/7/9 12:12
- * @detail：距离长度渲染
+ * @detail：Distance length rendering
  */
 class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmapInterview,IMathInterview{
     override var fragmentPath: String = "shader/bitmap_shader.frag"
@@ -80,10 +80,10 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
 
         GLES30.glEnableVertexAttribArray(a_Position)
         GLES30.glEnableVertexAttribArray(a_ColorTexCoord)
-        //开启背面剔除
+        //Enable back face culling
         GLES30.glEnable(GLES30.GL_CULL_FACE)
         GLES30.glCullFace(GLES30.GL_BACK)
-        // 开启混色
+        // Enable blending
         GLES30.glEnable(GLES30.GL_BLEND)
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
 
@@ -106,7 +106,7 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
     }
 
     /**
-     * 给bitmap绘制内容
+     * Draw content on bitmap
      * @param content String
      */
     fun setLength2Bitmap(content:String){
@@ -114,7 +114,7 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
     }
 
     /**
-     * 设置顶点坐标
+     * Set vertex coordinates
      * @param pose1 Pose
      * @param pose2 Pose
      * @param viewMatrix FloatArray
@@ -123,15 +123,15 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
         val pos1_world = floatArrayOf(pose1.tx(),pose1.ty(),pose1.tz(),1f)
         val pos2_world = floatArrayOf(pose2.tx(),pose2.ty(),pose2.tz(),1f)
 
-        // 转为相机坐标系下的两个点
+        // Convert to two points in camera coordinate system
         val pos1_camera = FloatArray(4)
         val pos2_camera = FloatArray(4)
         Matrix.multiplyMV(pos1_camera, 0, viewMatrix, 0, pos1_world, 0)
         Matrix.multiplyMV(pos2_camera, 0, viewMatrix, 0, pos2_world, 0)
 
 
-        val mappingNear = true // 是否投影在近剪切面上
-        // 转为近剪切面上的两个点
+        val mappingNear = true // Whether to project onto the near clipping plane
+        // Convert to two points on the near clipping plane
         var newpose1 = FloatArray(4)
         var newpose2 = FloatArray(4)
         if (mappingNear){
@@ -142,7 +142,7 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
             newpose2 = pos2_camera
         }
 
-        // newpose1，newpose2的中点
+        // Midpoint of newpose1 and newpose2
         val centerpose = floatArrayOf(
             (newpose2[0] + newpose1[0])/2,
             (newpose2[1] + newpose1[1])/2,
@@ -150,14 +150,14 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
             +1.0f
         )
 
-        // 求出这两个点 在 z = -0.1时，在这个平面上的二维向量
+        // Find the 2D vector of the two points on the plane where z = -0.1
         val vectorX = FloatArray(2)
         vectorX[0] = newpose2[0] - newpose1[0]
         vectorX[1] = newpose2[1] - newpose1[1]
 
-        // vector进行归一化
+        // Normalize the vector
         val normalX = normal(vectorX)
-        // 旋转90度，垂直向量，此处容易有问题，原因是Java的cos90°不为0
+        // Rotate 90 degrees to get a perpendicular vector; this may have issues because Java's cos(90°) != 0
         val normalY = rotate90(normalX)
 
         val pointA = FloatArray(3)
@@ -193,9 +193,9 @@ class PictureRenderer(context: Context) : BaseRenderer(context),IMatrix ,IBitmap
         pointD[1] = centerpose[1] + vector1Y + vector2Y
         pointD[2] = centerpose[2]
 
-        // 保证看的时候，纹理始终朝上
-        // A点的Y 小于 C点的Y时。顶点坐标按A-B-C-D排序
-        // A点的Y不小于C点的Y时，顶点坐标按D-C-B-A排序
+        // Ensure texture always faces upward when viewed
+        // When Y of point A is less than Y of point C, sort vertices as A-B-C-D
+        // When Y of point A is not less than Y of point C, sort vertices as D-C-B-A
         if (pointA[1]<pointC[1]){
             vertex[0] = pointA[0]
             vertex[1] = pointA[1]

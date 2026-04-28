@@ -13,9 +13,9 @@ import javax.microedition.khronos.opengles.GL
 /**
  * @author：TianLong
  * @date：2022/6/27 23:31
- * @detail：背景 渲染 Renderer
- *          使用glBindBuffer来绑定索引缓冲区数据
- *          调用glDrawElement来进行渲染
+ * @detail：Background rendering Renderer
+ *          Uses glBindBuffer to bind index buffer data
+ *          Calls glDrawElements to perform rendering
  */
 class BackgroundRenderer(context : Context) : BaseRenderer(context) {
     override var fragmentPath: String = "shader/background_show_camera.frag"
@@ -29,15 +29,15 @@ class BackgroundRenderer(context : Context) : BaseRenderer(context) {
     var a_Position = -1
     var a_CameraTexCoord = -1
 
-    //默认顶点坐标
+    // Default vertex coordinates
     private val vertexCoords = floatArrayOf(
-        -1.0f, -1.0f, //第0个点
-        -1.0f, +1.0f, //第1个点
-        +1.0f, -1.0f, //第2个点
-        +1.0f, +1.0f  //第3个点
+        -1.0f, -1.0f, // Point 0
+        -1.0f, +1.0f, // Point 1
+        +1.0f, -1.0f, // Point 2
+        +1.0f, +1.0f  // Point 3
     )
 
-    // 两个三角形，组成一个正方形，根据顶点坐标顺序来写索引素和顺序
+    // Two triangles forming a square; write indices in the order of vertex coordinates
     private val indices = intArrayOf(
         0,2,3,
         0,3,1
@@ -82,13 +82,13 @@ class BackgroundRenderer(context : Context) : BaseRenderer(context) {
         Log.w(TAG,"onSurfaceCreated")
         initProgram()
         initTexture()
-//        // 绑定vbo
+//        // Bind VBO
 //        val vbo = IntArray(1)
 //        GLES30.glGenBuffers(1,vbo,0)
 //        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER,vbo[0])
 //        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER,4 * vertexCoords.size,vertexBuffer,GLES30.GL_STATIC_DRAW)
 //        GLES30.glEnableVertexAttribArray(a_Position)
-        // 绑定ibo
+        // Bind IBO
         val ibo = IntArray(1)
         GLES30.glGenBuffers(1,ibo,0)
         GLES30.glBindBuffer(GLES30.GL_ELEMENT_ARRAY_BUFFER,ibo[0])

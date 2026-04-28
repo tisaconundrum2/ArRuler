@@ -14,7 +14,7 @@ import java.nio.FloatBuffer
 /**
  * @author：TianLong
  * @date：2022/6/30 22:28
- * @detail：Bitmap 渲染
+ * @detail：Bitmap rendering
  */
 class BitmapRenderer(context: Context) : BaseRenderer(context) ,IMatrix,IBitmapInterview{
     override var fragmentPath: String = "shader/bitmap_shader.frag"
@@ -32,8 +32,8 @@ class BitmapRenderer(context: Context) : BaseRenderer(context) ,IMatrix,IBitmapI
     override var matrix = FloatArray(4 * 4)
 
     /**
-     * 顶点坐标
-     * x,y,z opengl是右手笛卡尔坐标系
+     * Vertex coordinates
+     * x,y,z OpenGL uses a right-handed Cartesian coordinate system
      */
     private val threshold = 0.1f
 
@@ -45,7 +45,7 @@ class BitmapRenderer(context: Context) : BaseRenderer(context) ,IMatrix,IBitmapI
     )
 
     /**
-     * 纹理坐标
+     * Texture coordinates
      */
     private val textureCoord = floatArrayOf(
         0.0f, 1.0f,
@@ -115,15 +115,15 @@ class BitmapRenderer(context: Context) : BaseRenderer(context) ,IMatrix,IBitmapI
         GLES30.glVertexAttribPointer(a_Position, 3, GLES30.GL_FLOAT, false, 0, vertexBuffer)
         GLES30.glVertexAttribPointer(a_ColorTexCoord, 2, GLES30.GL_FLOAT, false, 0, textureBuffer)
 
-        // 开启背面剔除，默认的逆时针绘制为正面，开启后只绘制正面节省性能
+        // Enable back face culling; counter-clockwise drawing is front face by default; only render front face to save performance
         GLES30.glDisable(GLES30.GL_CULL_FACE)
         GLES30.glCullFace(GLES30.GL_BACK)
 
-        // 开启混色,混色在glDarwArrays之前不能关闭，否则不生效
+        // Enable blending; blending must not be disabled before glDrawArrays, otherwise it won't take effect
         GLES30.glEnable(GLES30.GL_BLEND)
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
 
-        // 绘制三角带，
+        // Draw triangle strip
         GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, 4)
 
         GLES30.glDisable(GLES30.GL_CULL_FACE)

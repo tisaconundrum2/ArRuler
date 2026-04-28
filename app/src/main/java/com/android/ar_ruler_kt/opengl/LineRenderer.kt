@@ -13,7 +13,7 @@ import java.util.*
 /**
  * @author：TianLong
  * @date：2022/7/7 17:52
- * @detail：画线和点的Renderer
+ * @detail：Renderer for drawing lines and points
  */
 class LineRenderer(context:Context): BaseRenderer(context),IMatrix {
     override var vertexPath: String = "shader/dottedline_shader.vert"

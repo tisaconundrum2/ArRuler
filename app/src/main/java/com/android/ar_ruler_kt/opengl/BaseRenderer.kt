@@ -9,7 +9,7 @@ import com.android.ar_ruler_kt.helper.ShaderHelper
 /**
  * @author：TianLong
  * @date：2022/6/27 22:39
- * @detail：基础 Renderer 类
+ * @detail：Base Renderer class
  */
  abstract class BaseRenderer(override var context: Context) : IBaseRenderer,ShaderImpl{
     var textureIds = IntArray(1)

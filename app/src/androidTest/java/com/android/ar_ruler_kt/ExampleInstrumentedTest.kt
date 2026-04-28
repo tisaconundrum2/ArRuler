@@ -32,6 +32,6 @@ class ExampleInstrumentedTest {
 
         val c = 16.0
         val d = sqrt(c)
-        Log.w("测试",":${b}   $d")
+        Log.w("test",":${b}   $d")
     }
 }

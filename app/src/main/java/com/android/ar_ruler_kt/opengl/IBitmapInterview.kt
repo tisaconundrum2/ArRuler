@@ -39,24 +39,24 @@ interface IBitmapInterview {
 
     fun drawBitmap(width:Int,height:Int,content:String):Bitmap{
         val bitmap =Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
-        // 保证bitmap是可编辑的
+        // Ensure the bitmap is mutable
 //        val bitmap = data.copy(Bitmap.Config.ARGB_8888, true)
 
         val rectF = RectF(0f, 0f, (width).toFloat(), height.toFloat())
 
-        // 创建Canvas
+        // Create Canvas
         val canvas = Canvas(bitmap)
 
         canvas.drawRoundRect(rectF, 25f, 25f, paint)
-        // 获取文字的宽高
+        // Get the text width and height
         val rect = Rect()
         paintText.getTextBounds(content,0, content.length,rect)
         val textWidth = rect.width()
         val textHeight = rect.height()
-        // 绘制文字，view向下为y轴正方向，向左为x轴正方向，（0，0）位置在屏幕左上角
-        // 位置设置为0，0时，会将文字的左下角绘制到（0.0）的位置。
-        // 所以要将文字中心绘制到想要的位置上，宽需要往左（x軸负方向）便宜textWidth/2，高需要往下（y軸正方向）。
-        // 原因：想想文字左下角绘制在屏幕左上角（0，0）时的效果
+        // Draw text: in view, down is positive Y, right is positive X, (0,0) is top-left of screen
+        // When position is (0,0), the bottom-left corner of the text is drawn at (0,0).
+        // To center the text, offset left by textWidth/2 (negative X) and down by textHeight/2 (positive Y).
+        // Reason: imagine the text with its bottom-left at the screen's top-left (0,0)
         canvas.drawText( content,(width.toFloat()-textWidth)/2, (height.toFloat()+textHeight)/2,paintText)
 
 //        canvas.drawCircle( width.toFloat()/2, height.toFloat()/2,60.0f,paintCircle)
@@ -65,9 +65,9 @@ interface IBitmapInterview {
 
     /**
      * Change bitmap
-     * 示例方法，修改bitmap rgb通道，以及 左右翻转，上下翻转
+     * Example method: modify bitmap RGB channels, flip horizontally and vertically
      * @param bitmap
-     * @return 返回修改过的bitmap
+     * @return the modified bitmap
      */
     fun changeBitmap(bitmap: Bitmap):Bitmap{
         val newbitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -81,8 +81,8 @@ interface IBitmapInterview {
         for (i in 0 until height){
             for (j in 0 until width){
                 val temp  = data[i * width + j]
-                // 一个像素4个通道，每个通道是1个自己
-                // int占4个字节。
+                // One pixel has 4 channels, each channel is 1 byte
+                // int occupies 4 bytes.
                 val a = temp shr 24 and 0xff
                 val b = temp shr 16 and 0xff
                 val g = temp shr 8 and 0xff

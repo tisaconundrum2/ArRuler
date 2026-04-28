@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener,IViewInterface,IBi
         setContentView(R.layout.activity_main)
 
         if (!SessionHelper.initialize(this)){
-            Toast.makeText(this,"ARCore初始化失败",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"ARCore initialization failed",Toast.LENGTH_SHORT).show()
             return
         }
 
