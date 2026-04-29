@@ -5,7 +5,7 @@ import android.opengl.Matrix
 /**
  * @author：TianLong
  * @date：2022/7/1 15:36
- * @detail：矩阵接口
+ * @detail：Matrix interface
  */
 interface IMatrix {
     var matrix: FloatArray

@@ -10,7 +10,7 @@ import java.util.*
 /**
  * @author：TianLong
  * @date：2022/6/27 20:59
- * @detail：ARCore Session Helper类
+ * @detail：ARCore Session Helper class
  */
 object SessionHelper:HelperInterface{
     val featureSet: Set<Session.Feature> = setOf()

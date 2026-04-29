@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * @author：TianLong
  * @date：2022/6/27 23:32
- * @detail：背景渲染类
+ * @detail：Background rendering class
  */
 class BackgroundSurface: GLSurface ,SessionImpl {
     lateinit var backgroundRenderer:BackgroundRenderer
@@ -23,12 +23,12 @@ class BackgroundSurface: GLSurface ,SessionImpl {
     lateinit var pointRenderer: PointRenderer
     lateinit var lineRenderer: LineRenderer
     lateinit var pictureRenderer: PictureRenderer
-    val motionEvent:MotionEvent = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0f, 0f, 0) // 没有具体意义
+    val motionEvent:MotionEvent = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0f, 0f, 0) // No specific meaning
     var viewMatrix = FloatArray(16)
     var projectMatrix = FloatArray(16)
     var iViewInterface:IViewInterface? = null
     private val anchorQueue:ConcurrentLinkedQueue<MotionEvent> by lazy {ConcurrentLinkedQueue<MotionEvent>() }
-    private val limitsSize = 10 // 点的上限个数
+    private val limitsSize = 10 // Maximum number of points
     private val anchorList = ArrayList<Anchor>(limitsSize)
     private val displayRotationHelper by lazy { DisplayRotationHelper(context) }
     override var session : Session? = null
@@ -45,7 +45,7 @@ class BackgroundSurface: GLSurface ,SessionImpl {
         pointRenderer = PointRenderer(context)
         lineRenderer = LineRenderer(context)
         pictureRenderer = PictureRenderer(context)
-        // 设置为单位矩阵
+        // Set to identity matrix
         Matrix.setIdentityM(viewMatrix,0)
         Matrix.setIdentityM(projectMatrix,0)
     }
@@ -73,9 +73,9 @@ class BackgroundSurface: GLSurface ,SessionImpl {
         session?.run {
             displayRotationHelper.updateSessionIfNeeded(session)
             this.setCameraTextureName(backgroundRenderer.textureIds[0])
-            // ARCore 更新frame 数据
+            // Update ARCore frame data
             val frame = this.update()
-            // 从ARCore获取顶点数据和纹理数据
+            // Get vertex and texture data from ARCore
             if (frame.hasDisplayGeometryChanged()) {
                 frame.transformCoordinates2d(
                     Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES,
@@ -101,45 +101,45 @@ class BackgroundSurface: GLSurface ,SessionImpl {
 
             camera.getViewMatrix(viewMatrix,0)
             camera.getProjectionMatrix(projectMatrix,0,0.01f,10f)
-            // 暂时在此处渲染
+            // Temporarily render here
             drawPoint()
             drawLine(null,anchorList,viewMatrix,projectMatrix)
 
             val pointX = width/2F
             val pointY = height/2F
-            val hitResults =frame.hitTest(pointX,pointY) // 检测点为屏幕正中央
+            val hitResults =frame.hitTest(pointX,pointY) // Detection point is the center of the screen
 
-            // 锚点不知道是否准确
+            // Accuracy of anchor point is uncertain
             if (hitResults.isNotEmpty() and (hitResults.size>0)){
                 val hitResult = hitResults.last()
-                val type = trackable(hitResult.trackable) // 这一步仅仅是打印hitResult的trackable，没有任何实际意义
+                val type = trackable(hitResult.trackable) // This step only prints the trackable of hitResult, with no practical significance
 
                 val trackable = hitResult.trackable
 
-//                if ((trackable is Plane ) && trackable.isPoseInPolygon(hitResult.hitPose)){ // 追踪类型为平面，且锚点在平面上，检测太为苛刻
-                if((trackable is Plane ) or (trackable is Point) or (trackable is DepthPoint )){// 追踪类型为平面，点，深度点即可
+//                if ((trackable is Plane ) && trackable.isPoseInPolygon(hitResult.hitPose)){ // Tracking type is Plane and anchor is on the plane - detection is too strict
+                if((trackable is Plane ) or (trackable is Point) or (trackable is DepthPoint )){// Tracking type can be Plane, Point, or DepthPoint
                     val anchor : Anchor
                     try {
                         anchor = hitResult.createAnchor()
 
                         if (anchor.trackingState == TrackingState.TRACKING){
                             detectSuccess("Anchor: $type ${anchor.trackingState.name} ")
-                            // 获取点的位置
+                            // Get the position of the point
                             val pose = FloatArray(16)
                             anchor.pose.toMatrix(pose ,0)
 
-                            // 渲染Bitmap(圆圈bitmap)
+                            // Render Bitmap (circle bitmap)
                             bitmapRenderer.upDateMatrix(pose,viewMatrix,projectMatrix)
                             bitmapRenderer.onDrawFrame()
 
-                            // 填加锚点
+                            // Add anchor point
                             addAnchorPoint(anchor)
                             Log.e(TAG,"bitmapRenderer.onDrawFrame():${hitResult.distance}")
                         }else{
                            detectFailed(anchor.trackingState.name)
                         }
 
-                        // 暂时在此处渲染
+                        // Temporarily render here
                         drawPoint(true)
                         drawLine(anchor,anchorList,viewMatrix,projectMatrix)
                     }catch (e:Exception){
@@ -150,11 +150,11 @@ class BackgroundSurface: GLSurface ,SessionImpl {
                     detectFailed(trackable(hitResult.trackable))
                 }
             }else{
-                detectFailed("请移动手机，获取特征值")
+                detectFailed("Move your phone to detect surface features")
                 return
             }
 
-            Log.w(TAG,"耗时：${System.currentTimeMillis()-tt}")
+            Log.w(TAG,"Elapsed: ${System.currentTimeMillis()-tt}ms")
         }
     }
 
@@ -222,17 +222,16 @@ class BackgroundSurface: GLSurface ,SessionImpl {
 
     /**
      * Draw line
-     * 画线
-     * @param currentAnchor 当前锚点
-     * @param list 锚点list
-     * @param view 视矩阵
-     * @param project 投影矩阵
+     * @param currentAnchor current anchor point
+     * @param list anchor point list
+     * @param view view matrix
+     * @param project projection matrix
      */
     @Synchronized
     private fun drawLine(currentAnchor: Anchor?, list:ArrayList<Anchor>, view:FloatArray, project:FloatArray){
             val size = list.size / 2
             for (index in 0 until size){
-                // 两个点效果一样。所以注掉
+                // Both points have the same effect, so commented out
                 val pose1 = list[index*2].pose.translation
                 val pose2 = list[index*2+1].pose.translation
                 val point1 = floatArrayOf(
@@ -246,7 +245,7 @@ class BackgroundSurface: GLSurface ,SessionImpl {
                 drawPicture(list[index*2].pose, list[index*2+1].pose,view,project)
             }
 
-        // 当前锚点不为空时，进行渲染
+        // Render when current anchor is not null
         currentAnchor?.run {
             val isAnchor = list.isNotEmpty() && list.size % 2 != 0
             if (isAnchor){
@@ -269,8 +268,7 @@ class BackgroundSurface: GLSurface ,SessionImpl {
 
     /**
      * Draw point
-     * 画点
-     * @param draw 当点个数为单数时，是否画单独的那个点
+     * @param draw whether to draw the single point when the number of points is odd
      */
     @Synchronized
     private fun drawPoint(draw:Boolean = false){
@@ -294,26 +292,26 @@ class BackgroundSurface: GLSurface ,SessionImpl {
 
     @Synchronized
     fun drawPicture(pose1:Pose,pose2:Pose,view: FloatArray,project: FloatArray){
-        // 计算两个点之间的距离
+        // Calculate the distance between two points
         val length = pictureRenderer.length(pose1,pose2)
         val res = String.format("%.2f", length)
-        // 获取将要绘制的bitmap
+        // Get the bitmap to be drawn
 
         pictureRenderer.setLength2Bitmap("${res}m")
-        // 更新顶点坐标
+        // Update vertex coordinates
         pictureRenderer.upDataVertex(pose1,pose2,view)
-        // 更新MVP矩阵，进行绘制
+        // Update MVP matrix and draw
         pictureRenderer.upDatePMatrix(project)
         pictureRenderer.onDrawFrame()
     }
 
 
-    private fun detectSuccess(msg:String = "检测成功"){
+    private fun detectSuccess(msg:String = "Detection successful"){
         detectPointOrPlane=true
         iViewInterface?.detectSuccess(msg)
     }
 
-    private fun detectFailed(msg:String = "检测失败"){
+    private fun detectFailed(msg:String = "Detection failed"){
         detectPointOrPlane=false
         iViewInterface?.detectFailed(msg)
     }

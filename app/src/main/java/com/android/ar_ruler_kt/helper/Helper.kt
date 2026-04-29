@@ -49,7 +49,7 @@ object Helper : HelperInterface {
      */
     fun setFullScreenOnWindowFocusChanged(activity: Activity, hasFocus: Boolean) {
         if (hasFocus) {
-            // 使用新的 WindowInsetsController API 实现全屏沉浸模式
+            // Use the new WindowInsetsController API for full-screen immersive mode
             val window = activity.window
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 // New API for Android 11+
